@@ -48,7 +48,8 @@ var diffMarkers = function (ev, startName, endName, alternateEndName) {
 function Reporter() {
 }
 
-Reporter.prototype.initialize = function () {
+Reporter.prototype.initialize = function (magellanGlobals) {
+  var analytics = magellanGlobals.analytics;
   var self = this;
   var deferred = Q.defer();
   deferred.resolve();
