@@ -1,0 +1,33 @@
+{
+  "name": "testarmada-time-stats-reporter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index",
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:TestArmada/magellan-time-stats-reporter.git"
+  },
+  "contributors": [
+    {
+      "name": "Maciej Adwent",
+      "url": "http://github.com/Maciek416"
+    }
+  ],
+  "license": "MIT",
+  "scripts": {
+  },
+  "dependencies": {
+    "cli-color": "^0.3.2",
+    "lodash": "^4.6.1",
+    "portscanner": "^1.0.0",
+    "pretty-ms": "^1.0.0",
+    "q": "1.0.1"
+  },
+  "engineStrict": true,
+  "engines": {
+    "npm": ">=2.1.10"
+  }
+}
