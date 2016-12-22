@@ -20,11 +20,11 @@
   "scripts": {
   },
   "dependencies": {
-    "cli-color": "^0.3.2",
+    "cli-color": "^1.1.0",
     "lodash": "^4.6.1",
-    "portscanner": "^1.0.0",
-    "pretty-ms": "^1.0.0",
-    "q": "1.0.1"
+    "portscanner": "^2.1.1",
+    "pretty-ms": "^2.1.0",
+    "q": "1.4.1"
   },
   "engineStrict": true,
   "engines": {
