@@ -1,12 +1,10 @@
+/* eslint no-extra-parens: 0 */
 "use strict";
 
 var Q = require("q");
-var util = require("util");
 var prettyMs = require("pretty-ms");
 var _ = require("lodash");
 var clc = require("cli-color");
-
-var analytics;
 
 var timeline = [];
 
@@ -45,7 +43,14 @@ var diffMarkers = function (ev, startName, endName, alternateEndName) {
   return diffMarkerTimes(startMarker, endMarker);
 };
 
-function Reporter() {
+function Reporter(opts) {
+  this.options = {
+    console: console
+  };
+  /* istanbul ignore else */
+  if (opts && opts.console) {
+    this.options.console = opts.console;
+  }
 }
 
 Reporter.prototype.initialize = function (magellanGlobals) {
@@ -202,81 +207,99 @@ Reporter.prototype.flush = function () {
     })
     .value();
 
-  console.log(clc.greenBright("\n============= Runtime Stats ==============\n"));
-  console.log("");
-  console.log("                 # Test runs: " + testRuns.length);
-  console.log("          # Passed test runs: " + numPassedTests);
-  console.log("          # Failed test runs: " + numFailedTests);
-  console.log("           # Re-attempt runs: " + numRetries);
-  console.log("");
-  console.log("                  Human time: " + prettyMs(timeSpentFailing + timeSpentPassing));
-  console.log("               Magellan time: " + prettyMs(magellanTime));
+  this.options.console.log(clc.greenBright("\n============= Runtime Stats ==============\n"));
+  this.options.console.log("");
+  this.options.console.log("                 # Test runs: " + testRuns.length);
+  this.options.console.log("          # Passed test runs: " + numPassedTests);
+  this.options.console.log("          # Failed test runs: " + numFailedTests);
+  this.options.console.log("           # Re-attempt runs: " + numRetries);
+  this.options.console.log("");
+  this.options.console.log("                  Human time: " +
+    prettyMs(timeSpentFailing + timeSpentPassing));
+  this.options.console.log("               Magellan time: " + prettyMs(magellanTime));
   if (magellanTime > 0) {
-    console.log("Human-to-Magellan multiplier: " + ((timeSpentFailing + timeSpentPassing) / magellanTime).toFixed(2) + "X");
+    this.options.console.log("Human-to-Magellan multiplier: " +
+    ((timeSpentFailing + timeSpentPassing) / magellanTime).toFixed(2) + "X");
   } else {
-    console.log("Human-to-Magellan multiplier: N/A");
+    this.options.console.log("Human-to-Magellan multiplier: N/A");
   }
 
-  console.log("    Human time spent passing: " + prettyMs(timeSpentPassing));
-  console.log("    Human time spent failing: " + prettyMs(timeSpentFailing));
-  console.log("");
+  this.options.console.log("    Human time spent passing: " + prettyMs(timeSpentPassing));
+  this.options.console.log("    Human time spent failing: " + prettyMs(timeSpentFailing));
+  this.options.console.log("");
 
   if (numRetries > 0 && magellanTime > 0) {
-    console.log("         Human time retrying: " + prettyMs(timeSpentRetrying));
-    console.log("Retrying as % of total human: " + (timeSpentRetrying / (timeSpentFailing + timeSpentPassing)).toFixed(1) + "%");
+    this.options.console.log("         Human time retrying: " + prettyMs(timeSpentRetrying));
+    this.options.console.log("Retrying as % of total human: " +
+      (timeSpentRetrying / (timeSpentFailing + timeSpentPassing)).toFixed(1) + "%");
   }
 
-
+  /* istanbul ignore else */
   if (testRuns.length > 0) {
-    console.log("       Average test run time: " + prettyMs((timeSpentFailing + timeSpentPassing) / testRuns.length));
+    this.options.console.log("       Average test run time: " +
+      prettyMs((timeSpentFailing + timeSpentPassing) / testRuns.length));
   } else {
-    console.log("       Average test run time: N/A");
+    this.options.console.log("       Average test run time: N/A");
   }
 
+  /* istanbul ignore else */
   if (numFailedTests > 0) {
-    console.log("Average failed test run time: " + prettyMs(timeSpentFailing / numFailedTests));
+    this.options.console.log("Average failed test run time: " +
+      prettyMs(timeSpentFailing / numFailedTests));
   } else {
-    console.log("Average failed test run time: N/A");
+    this.options.console.log("Average failed test run time: N/A");
   }
 
+  /* istanbul ignore else */
   if (numPassedTests > 0) {
-    console.log("Average passed test run time: " + prettyMs(timeSpentPassing / numPassedTests));
+    this.options.console.log("Average passed test run time: " +
+      prettyMs(timeSpentPassing / numPassedTests));
   } else {
-    console.log("Average passed test run time: N/A");
+    this.options.console.log("Average passed test run time: N/A");
   }
 
+  /* istanbul ignore else */
   if (slowestPassingTest) {
-    console.log("");
-    console.log("Slowest passing test:");
-    console.log("      test: \"" + slowestPassingTest.metadata.test + "\" @: " + slowestPassingTest.metadata.browser + " ");
-    console.log(" attempt #: " + slowestPassingTest.metadata.attemptNumber);
+    this.options.console.log("");
+    this.options.console.log("Slowest passing test:");
+    this.options.console.log("      test: \"" + slowestPassingTest.metadata.test +
+      "\" @: " + slowestPassingTest.metadata.browser + " ");
+    this.options.console.log(" attempt #: " + slowestPassingTest.metadata.attemptNumber);
   }
 
+  /* istanbul ignore else */
   if (slowestFailingTest) {
-    console.log("");
-    console.log("      test: \"" + slowestFailingTest.metadata.test + "\" @: " + slowestFailingTest.metadata.browser + " ");
-    console.log(" attempt #: " + slowestFailingTest.metadata.attemptNumber);
+    this.options.console.log("");
+    this.options.console.log("      test: \"" + slowestFailingTest.metadata.test +
+      "\" @: " + slowestFailingTest.metadata.browser + " ");
+    this.options.console.log(" attempt #: " + slowestFailingTest.metadata.attemptNumber);
   }
 
-  if (notTestRuns.length > 0 ) {
+  /* istanbul ignore else */
+  if (notTestRuns.length > 0) {
     var metrics = _.filter(notTestRuns, function (metric) {
       return metric.markers && metric.markers.length === 2;
     });
 
-    if(metrics.length) {
-      console.log("");
-      console.log("Other timing metrics: ");
+    /* istanbul ignore else */
+    if (metrics.length) {
+      this.options.console.log("");
+      this.options.console.log("Other timing metrics: ");
+      var self = this;
       metrics.forEach(function (metric) {
         var start = firstMarker(metric);
         var end = lastMarker(metric);
         var time = diffMarkerTimes(start, end);
-        console.log("    " + metric.name + " (" + start.name + " -> " + end.name + ") " + prettyMs(time));
+        self.options.console.log("    " + metric.name + " (" + start.name + " -> " +
+          end.name + ") " + prettyMs(time));
       });
-      console.log("");
+      this.options.console.log("");
     }
   }
 
-  console.log("");
+  this.options.console.log("");
 };
 
 module.exports = Reporter;
+module.exports.diffMarkerTimes = diffMarkerTimes;
+module.exports.diffMarkers = diffMarkers;
