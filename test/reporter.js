@@ -2,53 +2,53 @@
   no-magic-numbers: 0, callback-return: 0*/
 "use strict";
 
-var chai = require("chai");
-var expect = chai.expect;
-var sinon = require("sinon");
+const chai = require("chai");
+const expect = chai.expect;
+const sinon = require("sinon");
 
-var Reporter = require("../index");
-var completeData = require("./data/complete-data");
-var failedTest = require("./data/failed-test-data");
+const Reporter = require("../index");
+const completeData = require("./data/complete-data");
+const failedTest = require("./data/failed-test-data");
 
-describe("Reporter", function () {
-  it("should exist", function () {
+describe("Reporter", () => {
+  it("should exist", () => {
     expect(Reporter).to.not.be.null;
   });
 
-  it("should run without events", function () {
-    var spy = sinon.spy();
-    var a = new Reporter({
+  it("should run without events", () => {
+    const spy = sinon.spy();
+    const a = new Reporter({
       console: {
         log: spy
       }
     });
     a.initialize({
       analytics: {
-        sync: function () {
+        sync: () => {
           return [];
         },
-        getEmitter: function () {
+        getEmitter: () => {
           return {
-            addListener: function () {}
+            addListener: () => {}
           };
         }
       }
-    }).then(function () {
+    }).then(() => {
       a.flush();
       expect(spy.called).to.be.true;
     });
   });
 
-  it("should run have some global events", function () {
-    var spy = sinon.spy();
-    var a = new Reporter({
+  it("should run have some global events", () => {
+    const spy = sinon.spy();
+    const a = new Reporter({
       console: {
         log: spy
       }
     });
     a.initialize({
       analytics: {
-        sync: function () {
+        sync: () => {
           return [
             null,
             {},
@@ -69,75 +69,75 @@ describe("Reporter", function () {
               data: {t: 100, name: "foo"}}
           ];
         },
-        getEmitter: function () {
+        getEmitter: () => {
           return {
-            addListener: function () {}
+            addListener: () => {}
           };
         }
       }
-    }).then(function () {
+    }).then(() => {
       a.flush();
       expect(spy.called).to.be.true;
     });
   });
 
-  it("should allow listeners", function () {
-    var spy = sinon.spy();
-    var a = new Reporter({
+  it("should allow listeners", () => {
+    const spy = sinon.spy();
+    const a = new Reporter({
       console: {
         log: spy
       }
     });
     a.initialize({
       analytics: {
-        sync: function () {
+        sync: () => {
           return [];
         },
-        getEmitter: function () {
+        getEmitter: () => {
           return {
-            addListener: function () {}
+            addListener: () => {}
           };
         }
       }
-    }).then(function () {
+    }).then(() => {
       a.listenTo(null, null, {
-        addListener: function () {}
+        addListener: () => {}
       });
       a.listenTo("a", null, {
-        addListener: function () {}
+        addListener: () => {}
       });
       a.listenTo(null, "b", {
-        addListener: function () {}
+        addListener: () => {}
       });
       a.listenTo("a", "b", {
-        addListener: function () {}
+        addListener: () => {}
       });
       a.flush();
       expect(spy.called).to.be.true;
     });
   });
 
-  it("should handle test messages", function () {
-    var spy = sinon.spy();
-    var a = new Reporter({
+  it("should handle test messages", () => {
+    const spy = sinon.spy();
+    const a = new Reporter({
       console: {
         log: spy
       }
     });
     a.initialize({
       analytics: {
-        sync: function () {
+        sync: () => {
           return [];
         },
-        getEmitter: function () {
+        getEmitter: () => {
           return {
-            addListener: function () {}
+            addListener: () => {}
           };
         }
       }
-    }).then(function () {
+    }).then(() => {
       a.listenTo("a", "b", {
-        addListener: function (name, cb) {
+        addListener: (name, cb) => {
           expect(name).to.eql("message");
           cb();
           cb({});
@@ -163,27 +163,27 @@ describe("Reporter", function () {
     });
   });
 
-  it("should handle a passing test", function () {
-    var spy = sinon.spy();
-    var a = new Reporter({
+  it("should handle a passing test", () => {
+    const spy = sinon.spy();
+    const a = new Reporter({
       console: {
         log: spy
       }
     });
     a.initialize({
       analytics: {
-        sync: function () {
+        sync: () => {
           return [];
         },
-        getEmitter: function () {
+        getEmitter: () => {
           return {
-            addListener: function () {}
+            addListener: () => {}
           };
         }
       }
-    }).then(function () {
-      for (var i in completeData) {
-        var message = completeData[i];
+    }).then(() => {
+      for (const i in completeData) {
+        const message = completeData[i];
         if (message.type === "global") {
           a._handleGlobalMessage(message.message);
         } else {
@@ -194,27 +194,27 @@ describe("Reporter", function () {
     });
   });
 
-  it("should handle a failed test", function () {
-    var spy = sinon.spy();
-    var a = new Reporter({
+  it("should handle a failed test", () => {
+    const spy = sinon.spy();
+    const a = new Reporter({
       console: {
         log: spy
       }
     });
     a.initialize({
       analytics: {
-        sync: function () {
+        sync: () => {
           return [];
         },
-        getEmitter: function () {
+        getEmitter: () => {
           return {
-            addListener: function () {}
+            addListener: () => {}
           };
         }
       }
-    }).then(function () {
-      for (var i in failedTest) {
-        var message = failedTest[i];
+    }).then(() => {
+      for (const i in failedTest) {
+        const message = failedTest[i];
         if (message.type === "global") {
           a._handleGlobalMessage(message.message);
         } else {
@@ -225,14 +225,14 @@ describe("Reporter", function () {
     });
   });
 
-  it("should handle diffMarkerTimes variants", function () {
+  it("should handle diffMarkerTimes variants", () => {
     expect(Reporter.diffMarkerTimes(null, null)).to.eql(0);
     expect(Reporter.diffMarkerTimes({t: 0}, null)).to.eql(0);
     expect(Reporter.diffMarkerTimes(null, {t: 0})).to.eql(0);
     expect(Reporter.diffMarkerTimes({t: 0}, {t: 110})).to.eql(110);
   });
 
-  it("should handle poorly formed diffMarkers", function () {
+  it("should handle poorly formed diffMarkers", () => {
     expect(Reporter.diffMarkers({markers: []})).to.eql(0);
   });
 });
