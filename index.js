@@ -231,7 +231,7 @@ class Reporter {
       this.options.console.log("");
       this.options.console.log("Slowest passing test:");
       this.options.console.log("      test: \"" + slowestPassingTest.metadata.test +
-        "\" @: " + slowestPassingTest.metadata.browser + " ");
+        "\" @: " + slowestPassingTest.metadata.profile + " ");
       this.options.console.log(" attempt #: " + slowestPassingTest.metadata.attemptNumber);
     }
 
@@ -239,7 +239,7 @@ class Reporter {
     if (slowestFailingTest) {
       this.options.console.log("");
       this.options.console.log("      test: \"" + slowestFailingTest.metadata.test +
-        "\" @: " + slowestFailingTest.metadata.browser + " ");
+        "\" @: " + slowestFailingTest.metadata.profile + " ");
       this.options.console.log(" attempt #: " + slowestFailingTest.metadata.attemptNumber);
     }
 
